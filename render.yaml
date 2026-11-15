@@ -1,0 +1,48 @@
+# Render Blueprint: free web service + free Postgres
+# Render dashboard > New > Blueprint > pick this GitHub repo.
+services:
+  - type: web
+    name: athena-infliction
+    runtime: docker
+    plan: free
+    healthCheckPath: /up
+    envVars:
+      - key: APP_NAME
+        value: Infliction Gym
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_KEY            # copy APP_KEY from your local .env
+        sync: false
+      - key: APP_URL            # e.g. https://athena-infliction.onrender.com
+        sync: false
+      - key: APP_TIMEZONE
+        value: Asia/Manila
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_URL
+        fromDatabase:
+          name: athena-db
+          property: connectionString
+      - key: SESSION_DRIVER
+        value: database
+      - key: CACHE_STORE
+        value: database
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GROQ_MODELS
+        value: openai/gpt-oss-120b,openai/gpt-oss-20b
+      - key: META_VERIFY_TOKEN
+        sync: false
+      - key: META_PAGE_ACCESS_TOKEN
+        sync: false
+      - key: META_APP_SECRET
+        sync: false
+
+databases:
+  - name: athena-db
+    plan: free          # expires 30 days after creation; use Supabase for a longer-lived free database
+    databaseName: athena_ai
